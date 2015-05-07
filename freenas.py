@@ -20,8 +20,9 @@ class fnas(object):
         #"id": 1,
         "task_ret_unit": "day"
     }
-    def __init__(self, url, auth): #===========================
-        self.fnas_api = url
+    def __init__(self, fnas_name, fnas_api, auth): #===========================
+        self.fnas_name = fnas_name
+        self.fnas_api = self.fnas_name + fnas_api
         self.sess = requests.Session()
         self.sess.auth = auth 
         self.sess.headers.update({'Content-Type': 'application/json'})
@@ -152,7 +153,7 @@ class fnas(object):
         self.run('get', '/storage/replication/')   
         if 200 != self.status_code:
             raise Exception("Error in ReplTask_List vol="+volCIFS +", status=" + str(self.status_code) )
-        return [task for task in self.j if task["repl_filesystem"] == self.CIFS_getVolName(volCIFS)]
+        return [task for task in self.j if task["repl_filesystem"].lower() == self.CIFS_getVolName(volCIFS).lower()]
 
     def ReplTask_Get(self, fnas_to, volCIFS): #===========================
         "return replication Task to fnas_to for volCIFS"
